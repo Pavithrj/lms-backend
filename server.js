@@ -15,8 +15,8 @@ app.use('/api/auth', authRoutes);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {
-    res.send("Welcome to the Learning Management System API.");
-    console.log("Learning Management System API is running");
+    res.send("Welcome to the Learning Management System API edited.");
+    console.log("Learning Management System API is running edited.");
 });
 
 app.listen(PORT, async () => {
