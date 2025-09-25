@@ -16,7 +16,6 @@ app.use(errorHandler);
 
 app.get("/", (req, res) => {
     res.send("Welcome to the Learning Management System API.");
-    console.log("Learning Management System API is running.");
 });
 
 app.listen(PORT, async () => {
