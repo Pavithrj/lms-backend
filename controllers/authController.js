@@ -1,25 +1,53 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const validator = require('validator');
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
 // Optional: const sendEmail = require('../utils/sendEmail');
 
 const sendTokenResponse = (user, statusCode, res) => {
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRE
-    });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
+
     res.status(statusCode).json({ success: true, token });
 };
 
 exports.register = async (req, res, next) => {
     try {
-        const { name, email, password } = req.body;
+        let { name, email, password, confirmPassword } = req.body;
+
+        if (!name || !email || !password || !confirmPassword) {
+            return res.status(400).json({ success: false, message: "All fields are required" });
+        }
+
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ success: false, message: "Please enter a valid email address" });
+        }
+
+        const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+        if (!strongPasswordRegex.test(password)) {
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character" });
+        }
+
+        if (password !== confirmPassword) {
+            return res.status(400).json({ success: false, message: "Passwords do not match" });
+        }
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: "Email already registered" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(password, salt);
+
         const user = await User.create({ name, email, password });
+
         sendTokenResponse(user, 201, res);
     } catch (err) {
-        if (err.code === 11000) {
-            return res.status(400).json({ success: false, message: 'Email already registered' });
-        }
         next(err);
     }
 };
@@ -63,6 +91,49 @@ exports.login = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.getUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json({ success: true, data: user });
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.getAllUsers = async (req, res, next) => {
+    try {
+        const users = await User.find().select('-password');
+
+        res.status(200).json({
+            success: true,
+            count: users.length,
+            data: users
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// User List with Passwords
+// exports.getAllUsers = async (req, res, next) => {
+//     try {
+//         const users = await User.find().select('+password');
+
+//         res.status(200).json({
+//             success: true,
+//             count: users.length,
+//             data: users
+//         });
+//     } catch (err) {
+//         next(err);
+//     }
+// };
 
 exports.forgotPassword = async (req, res, next) => {
     try {
@@ -111,47 +182,3 @@ exports.resetPassword = async (req, res, next) => {
         next(err);
     }
 };
-
-exports.getUser = async (req, res, next) => {
-    try {
-        const user = await User.findById(req.params.id);
-
-        console.log("user", user);
-
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
-        res.status(200).json({ success: true, data: user });
-    } catch (err) {
-        next(err);
-    }
-};
-
-exports.getAllUsers = async (req, res, next) => {
-    try {
-        const users = await User.find().select('-password');
-
-        res.status(200).json({
-            success: true,
-            count: users.length,
-            data: users
-        });
-    } catch (err) {
-        next(err);
-    }
-};
-
-// User List with Passwords
-// exports.getAllUsers = async (req, res, next) => {
-//     try {
-//         const users = await User.find().select('+password');
-//         console.log('First user from DB:', users[0]);
-//         res.status(200).json({
-//             success: true,
-//             count: users.length,
-//             data: users
-//         });
-//     } catch (err) {
-//         next(err);
-//     }
-// };
