@@ -1,8 +1,8 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const validator = require("validator");
-const bcrypt = require("bcryptjs");
+const validator = require('validator');
+const bcrypt = require('bcryptjs');
 // Optional: const sendEmail = require('../utils/sendEmail');
 
 const sendTokenResponse = (user, statusCode, res) => {
@@ -56,34 +56,34 @@ exports.login = async (req, res, next) => {
     try {
         let { email, password } = req.body;
 
-        email = email ? email.trim() : '';
-        password = password ? password.trim() : '';
+        email = email ? email.trim() : "";
+        password = password ? password.trim() : "";
 
         if (!email || !password) {
-            return res.status(400).json({ success: false, message: 'Please provide email and password' });
+            return res.status(400).json({ success: false, message: "Please provide email and password" });
         }
 
         if (!validator.isEmail(email)) {
-            return res.status(400).json({ success: false, message: 'Please provide a valid email' });
+            return res.status(400).json({ success: false, message: "Please provide a valid email" });
         }
 
         if (password.length < 8) {
-            return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long' });
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters long" });
         }
 
-        const user = await User.findOne({ email }).select('+password');
+        const user = await User.findOne({ email }).select("+password");
 
         if (!user) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: "Invalid credentials" });
         }
 
         if (user.isVerified === false) {
-            return res.status(403).json({ success: false, message: 'Please verify your email before logging in' });
+            return res.status(403).json({ success: false, message: "Please verify your email before logging in" });
         }
 
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
-            return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            return res.status(401).json({ success: false, message: "Invalid credentials" });
         }
 
         sendTokenResponse(user, 200, res);
@@ -97,7 +97,7 @@ exports.getUser = async (req, res, next) => {
         const user = await User.findById(req.params.id);
 
         if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
+            return res.status(404).json({ success: false, message: "User not found" });
         }
 
         res.status(200).json({ success: true, data: user });
@@ -108,7 +108,7 @@ exports.getUser = async (req, res, next) => {
 
 exports.getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find().select('-password');
+        const users = await User.find().select("-password");
 
         res.status(200).json({
             success: true,
@@ -123,7 +123,7 @@ exports.getAllUsers = async (req, res, next) => {
 // User List with Passwords
 // exports.getAllUsers = async (req, res, next) => {
 //     try {
-//         const users = await User.find().select('+password');
+//         const users = await User.find().select("+password");
 
 //         res.status(200).json({
 //             success: true,
@@ -139,22 +139,22 @@ exports.forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ success: false, message: 'No user with that email' });
+        if (!user) return res.status(404).json({ success: false, message: "No user with that email" });
 
         const resetToken = user.getResetPasswordToken();
         await user.save({ validateBeforeSave: false });
 
-        const resetUrl = `${req.protocol}://${req.get('host')}/api/auth/resetpassword/${resetToken}`;
+        const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/resetpassword/${resetToken}`;
 
         try {
-            // sendEmail({ to: user.email, subject: 'Password reset', text: `Reset URL: ${resetUrl}` });
-            console.log('Password reset URL (send via email in production):', resetUrl);
-            res.status(200).json({ success: true, data: 'Email sent' });
+            // sendEmail({ to: user.email, subject: "Password reset", text: `Reset URL: ${resetUrl}` });
+            console.log("Password reset URL (send via email in production):", resetUrl);
+            res.status(200).json({ success: true, data: "Email sent" });
         } catch (err) {
             user.resetPasswordToken = undefined;
             user.resetPasswordExpire = undefined;
             await user.save({ validateBeforeSave: false });
-            return res.status(500).json({ success: false, message: 'Email could not be sent' });
+            return res.status(500).json({ success: false, message: "Email could not be sent" });
         }
     } catch (err) {
         next(err);
@@ -163,14 +163,14 @@ exports.forgotPassword = async (req, res, next) => {
 
 exports.resetPassword = async (req, res, next) => {
     try {
-        const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+        const resetPasswordToken = crypto.createHash("sha256").update(req.params.token).digest("hex");
 
         const user = await User.findOne({
             resetPasswordToken,
             resetPasswordExpire: { $gt: Date.now() }
-        }).select('+password');
+        }).select("+password");
 
-        if (!user) return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+        if (!user) return res.status(400).json({ success: false, message: "Invalid or expired token" });
 
         user.password = req.body.password;
         user.resetPasswordToken = undefined;
