@@ -5,21 +5,27 @@ const authRoutes = require('./routes/auth');
 const errorHandler = require('./middleware/error');
 const PORT = process.env.PORT || 5000;
 
+const uiRoutes = require('./routes/uiRoutes');
+const path = require('path');
+
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 app.use("/api/auth", authRoutes);
 
 app.use(errorHandler);
 
-app.get("/", (req, res) => {
-    res.send("Welcome to the Learning Management System API.");
-});
+app.use('/', uiRoutes);
 
 app.listen(PORT, async () => {
-    console.log(`Learning Management System API is running on http://localhost:${PORT}`);
-
     await connectDB();
+
+    console.log(`Learning Management System API is running on http://localhost:${PORT}`);
 });

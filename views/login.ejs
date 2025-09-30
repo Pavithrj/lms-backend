@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+    <main>
+        <h2>
+            Login
+        </h2>
+
+        <form id="loginForm">
+            <input name="email" id="email" placeholder="Email" type="email" required autocomplete="email" />
+
+            <input name="password" id="password" placeholder="Password" type="password" required
+                autocomplete="current-password" />
+
+            <button type="submit" class="login_button">
+                Login
+            </button>
+        </form>
+
+        <p>
+            Don’t have an account?
+
+            <a href="/signup">
+                Signup
+            </a>
+        </p>
+
+        <div id="message"></div>
+
+        <script src="/js/login.js"></script>
+    </main>
+</body>
+
+</html>
