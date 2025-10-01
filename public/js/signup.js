@@ -5,7 +5,6 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     document.getElementById('emailError').textContent = '';
     document.getElementById('passwordError').textContent = '';
     document.getElementById('confirmPasswordError').textContent = '';
-    document.getElementById('message').textContent = '';
 
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
@@ -61,11 +60,11 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
             if (data.field === 'name') document.getElementById('nameError').textContent = data.message;
             else if (data.field === 'email') document.getElementById('emailError').textContent = data.message;
             else if (data.field === 'password') document.getElementById('passwordError').textContent = data.message;
-            else document.getElementById('message').textContent = data.message || 'Signup failed';
+            else if (data.field === 'confirmPassword') document.getElementById('confirmPasswordError').textContent = data.message;
         }
     } catch (err) {
         console.error(err);
-        document.getElementById('message').textContent = 'Something went wrong';
+        document.getElementById('emailError').textContent = 'Something went wrong. Try again.';
     }
 });
 
