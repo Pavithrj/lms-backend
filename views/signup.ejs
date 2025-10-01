@@ -8,22 +8,41 @@
 </head>
 
 <body>
-    <main>
+    <main class="signup_container">
         <h2>
             Signup
         </h2>
 
-        <form id="signupForm">
-            <input name="name" id="name" placeholder="Full name" required autocomplete="name" />
+        <form id="signupForm" class="signup_Form">
+            <input name="name" id="name" placeholder="Full name" autocomplete="name" />
 
-            <input name="email" id="email" placeholder="Email" type="email" required autocomplete="email" />
+            <span id="nameError" class="error"></span>
 
+            <input name="email" id="email" placeholder="Email" type="email" autocomplete="email" />
 
-            <input name="password" id="password" placeholder="Password" type="password" required
-                autocomplete="new-password" />
+            <span id="emailError" class="error"></span>
 
-            <input name="confirmPassword" id="confirmPassword" placeholder="Confirm password" type="password" required
-                autocomplete="new-password" />
+            <div class="password-container">
+                <input name="password" id="password" placeholder="Password" type="password"
+                    autocomplete="new-password" />
+
+                <button type="button" id="togglePassword" class="toggle-password">
+                    👁️
+                </button>
+            </div>
+
+            <span id="passwordError" class="error"></span>
+
+            <div class="password-container">
+                <input name="confirmPassword" id="confirmPassword" placeholder="Confirm password" type="password"
+                    autocomplete="new-password" />
+
+                <button type="button" id="toggleConfirmPassword" class="toggle-password">
+                    👁️
+                </button>
+            </div>
+
+            <span id="confirmPasswordError" class="error"></span>
 
             <button type="submit" class="signup_button">
                 Signup
@@ -37,8 +56,6 @@
                 Login here
             </a>
         </p>
-
-        <div id="message"></div>
 
         <script src="/js/signup.js"></script>
     </main>

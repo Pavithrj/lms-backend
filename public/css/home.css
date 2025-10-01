@@ -3,6 +3,14 @@ body {
     padding: 20px;
 }
 
+.home_container {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .buttons {
     display: flex;
     gap: 10px;
