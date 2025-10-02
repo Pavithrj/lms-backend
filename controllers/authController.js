@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-// Optional: const sendEmail = require('../utils/sendEmail');
+const sendEmail = require('../utils/sendEmail');
 
 const sendTokenResponse = (user, statusCode, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE });
@@ -139,19 +139,39 @@ exports.forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ success: false, message: "No user with that email" });
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "No user with that email" });
+        }
 
         const resetToken = user.getResetPasswordToken();
         await user.save({ validateBeforeSave: false });
 
-        const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/resetpassword/${resetToken}`;
+        const resetUrl = `${req.protocol}://${req.get("host")}/reset-password/${resetToken}`;
+
+        const message = `
+      <p>You requested a password reset</p>
+      <p>Click here to reset: <a href="${resetUrl}">${resetUrl}</a></p>
+      <p>This link will expire in 15 minutes.</p>
+    `;
 
         try {
-            res.status(200).json({ success: true, data: "Email sent" });
+            await sendEmail({
+                to: user.email,
+                subject: "Password Reset Request",
+                text: `Reset your password using the following link: ${resetUrl}`,
+                html: message,
+            });
+
+            res.status(200).json({ success: true, message: "Email sent" });
         } catch (err) {
+            console.error(err);
+
             user.resetPasswordToken = undefined;
             user.resetPasswordExpire = undefined;
+
             await user.save({ validateBeforeSave: false });
+
             return res.status(500).json({ success: false, message: "Email could not be sent" });
         }
     } catch (err) {
