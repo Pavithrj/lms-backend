@@ -1,9 +1,9 @@
-document.getElementById('forgotForm').addEventListener('submit', async (e) => {
+document.getElementById("forgotForm").addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const emailInput = document.getElementById('email');
-    const emailError = document.getElementById('emailError');
-    emailError.textContent = '';
+    const emailInput = document.getElementById("email");
+    const emailError = document.getElementById("emailError");
+    emailError.textContent = "";
 
     const email = emailInput.value.trim();
 
@@ -13,9 +13,9 @@ document.getElementById('forgotForm').addEventListener('submit', async (e) => {
     }
 
     try {
-        const res = await fetch('/api/auth/forgot-password', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("/api/auth/forgot-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
         });
 
