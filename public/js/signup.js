@@ -35,7 +35,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     }
 
     if (!confirmPassword) {
-        document.getElementById('confirmPasswordError').textContent = 'Confirm your password';
+        document.getElementById('confirmPasswordError').textContent = 'Confirm password is required';
         valid = false;
     } else if (password !== confirmPassword) {
         document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';

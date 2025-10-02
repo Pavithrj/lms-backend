@@ -28,7 +28,6 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             body: JSON.stringify({ email, password })
         });
 
-        console.log("res", res)
 
         const data = await res.json();
 
