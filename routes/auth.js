@@ -11,7 +11,7 @@ router.get("/user/:id", getUser);
 
 router.get("/users", getAllUsers);
 
-router.post("/forgotpassword", forgotPassword);
+router.post("/forgot-password", forgotPassword);
 
 router.put("/resetpassword/:token", resetPassword);
 

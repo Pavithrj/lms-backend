@@ -147,8 +147,6 @@ exports.forgotPassword = async (req, res, next) => {
         const resetUrl = `${req.protocol}://${req.get("host")}/api/auth/resetpassword/${resetToken}`;
 
         try {
-            // sendEmail({ to: user.email, subject: "Password reset", text: `Reset URL: ${resetUrl}` });
-            console.log("Password reset URL (send via email in production):", resetUrl);
             res.status(200).json({ success: true, data: "Email sent" });
         } catch (err) {
             user.resetPasswordToken = undefined;

@@ -6,21 +6,23 @@ document.getElementById('forgotForm').addEventListener('submit', async (e) => {
     emailError.textContent = '';
 
     const email = emailInput.value.trim();
+
     if (!email) {
         emailError.textContent = "Email is required";
         return;
     }
 
     try {
-        const res = await fetch('/api/auth/forgotpassword', {
+        const res = await fetch('/api/auth/forgot-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
 
         const data = await res.json();
+
         if (data.success) {
-            alert("Password reset link sent to your email (check console for dev mode).");
+            alert("Password reset link sent to your email.");
         } else {
             emailError.textContent = data.message || "Something went wrong.";
         }
