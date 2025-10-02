@@ -13,7 +13,7 @@ router.get("/users", getAllUsers);
 
 router.post("/forgot-password", forgotPassword);
 
-router.put("/resetpassword/:token", resetPassword);
+router.put("/reset-password/:token", resetPassword);
 
 // router.post("/logout", logout);
 // router.post("/refresh-token", refreshToken);
