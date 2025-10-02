@@ -1,23 +1,23 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
-const sendEmail = async ({ to, subject, text }) => {
+const sendEmail = async (options) => {
     const transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
+        service: "gmail", // you can use "outlook", "yahoo", or SMTP settings
         auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        }
+            user: process.env.SMTP_EMAIL, // your email
+            pass: process.env.SMTP_PASSWORD, // your email app password
+        },
     });
 
-    const message = {
-        from: process.env.EMAIL_FROM,
-        to,
-        subject,
-        text
+    const mailOptions = {
+        from: `"LMS Support" <${process.env.SMTP_EMAIL}>`,
+        to: options.to,
+        subject: options.subject,
+        text: options.text,
+        html: options.html, // optional if you want styled emails
     };
 
-    await transporter.sendMail(message);
+    await transporter.sendMail(mailOptions);
 };
 
 module.exports = sendEmail;
