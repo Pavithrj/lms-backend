@@ -2,11 +2,11 @@ const nodemailer = require("nodemailer");
 
 const sendEmail = async (options) => {
     const transporter = nodemailer.createTransport({
-        service: "gmail", // you can use "outlook", "yahoo", or SMTP settings
+        service: "gmail",
         auth: {
-            user: process.env.SMTP_EMAIL, // your email
-            pass: process.env.SMTP_PASSWORD, // your email app password
-        },
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD,
+        }
     });
 
     const mailOptions = {
@@ -14,7 +14,7 @@ const sendEmail = async (options) => {
         to: options.to,
         subject: options.subject,
         text: options.text,
-        html: options.html, // optional if you want styled emails
+        html: options.html
     };
 
     await transporter.sendMail(mailOptions);

@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
+const teamRoutes = require('./routes/teamRoutes');
 const errorHandler = require('./middleware/error');
 const uiRoutes = require('./routes/uiRoutes');
 const path = require('path');
@@ -19,6 +20,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/api/auth", authRoutes);
+app.use('/api/team', teamRoutes);
 
 app.use(errorHandler);
 
