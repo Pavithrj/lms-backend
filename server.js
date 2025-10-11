@@ -20,7 +20,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/api/auth", authRoutes);
-app.use('/api/team', teamRoutes);
+app.use("/api/team", teamRoutes);
 
 app.use(errorHandler);
 
