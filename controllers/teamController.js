@@ -23,6 +23,7 @@ exports.createTeamMember = async (req, res) => {
         });
     } catch (error) {
         console.error(error);
+
         res.status(500).json({
             success: false,
             message: "Failed to add team member"
@@ -52,7 +53,7 @@ exports.deleteTeamMember = async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        if (error.kind === 'ObjectId') {
+        if (error.kind === "ObjectId") {
             return res.status(400).json({
                 success: false,
                 message: "Invalid team member ID"
@@ -69,9 +70,11 @@ exports.deleteTeamMember = async (req, res) => {
 exports.getAllTeamMembers = async (req, res) => {
     try {
         const team = await Team.find();
+
         res.status(200).json({ success: true, count: team.length, data: team });
     } catch (error) {
         console.error(error);
+
         res.status(500).json({ success: false, message: "Failed to fetch team members" });
     }
 };
@@ -113,7 +116,7 @@ exports.updateTeamMember = async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        if (error.kind === 'ObjectId') {
+        if (error.kind === "ObjectI") {
             return res.status(400).json({
                 success: false,
                 message: "Invalid team member ID"
