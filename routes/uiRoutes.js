@@ -22,4 +22,8 @@ router.get("/reset-password/:id", (req, res) => {
     res.render("resetPassword");
 });
 
+router.get("/team", (req, res) => {
+    res.render("team");
+});
+
 module.exports = router;
