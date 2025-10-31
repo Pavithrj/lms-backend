@@ -2,9 +2,9 @@ const Team = require('../models/Team');
 
 exports.createTeamMember = async (req, res) => {
     try {
-        const { pic, name, description, content } = req.body;
+        const { profilePic, name, emailId, githubUrl, xUrl } = req.body;
 
-        const existingMember = await Team.findOne({ name });
+        const existingMember = await Team.findOne({ emailId });
 
         if (existingMember) {
             return res.status(400).json({
@@ -13,8 +13,7 @@ exports.createTeamMember = async (req, res) => {
             });
         }
 
-        const newMember = new Team({ pic, name, description, content });
-        await newMember.save();
+        const newMember = await Team.create({ profilePic, name, emailId, githubUrl, xUrl });
 
         res.status(201).json({
             success: true,
