@@ -2,7 +2,6 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const validator = require('validator');
-const bcrypt = require('bcryptjs');
 const sendEmail = require('../utils/sendEmail');
 
 const sendTokenResponse = (user, statusCode, res) => {
@@ -40,9 +39,6 @@ exports.register = async (req, res, next) => {
         if (existingUser) {
             return res.status(400).json({ success: false, message: "Email already registered" });
         }
-
-        const salt = await bcrypt.genSalt(10);
-        password = await bcrypt.hash(password, salt);
 
         const user = await User.create({ name, email, password });
 
