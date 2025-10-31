@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const teamSchema = new mongoose.Schema({
-    pic: {
+    profilePic: {
         type: String,
         required: true
     },
@@ -9,11 +9,17 @@ const teamSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    description: {
+    emailId: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
+    githubUrl: {
         type: String,
         required: true
     },
-    content: {
+    xUrl: {
         type: String,
         required: true
     }
