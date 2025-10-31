@@ -1,0 +1,69 @@
+body {
+    font-family: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-seri;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.title {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.team-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.team-card {
+    width: 250px;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid gray;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.team-card img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.team-card .info {
+    padding: 12px;
+}
+
+.team-card h3 {
+    margin: 8px 0;
+    font-size: 20px;
+}
+
+.team-card p {
+    font-size: 14px;
+    color: #444;
+}
+
+.social-icons {
+    margin-top: 10px;
+}
+
+.social-icons a {
+    margin: 0 8px;
+    font-size: 20px;
+    text-decoration: none;
+}
