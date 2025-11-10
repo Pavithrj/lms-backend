@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const teamRoutes = require('./routes/teamRoutes');
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 5000;
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, "public")));
