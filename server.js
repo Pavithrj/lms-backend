@@ -2,8 +2,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/authRoutes');
 const teamRoutes = require('./routes/teamRoutes');
+const feedbackRoutes = require('./routes/feedbackRoutes');
 const errorHandler = require('./middleware/error');
 const uiRoutes = require('./routes/uiRoutes');
 const path = require('path');
@@ -23,6 +24,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/team", teamRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 app.use(errorHandler);
 
