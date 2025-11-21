@@ -1,10 +1,33 @@
-const Team = require('../models/Team');
+const Team = require("../models/Team");
 
 exports.createTeamMember = async (req, res) => {
     try {
-        const { profilePic, name, emailId, githubUrl, xUrl } = req.body;
+        const { name, role, tag, bio, image, socials } = req.body;
 
-        const existingMember = await Team.findOne({ emailId });
+        if (!name || !role || !tag || !bio || !image || !socials) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing required fields",
+            });
+        }
+
+        if (!Array.isArray(socials) || socials.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: "Socials must be a non-empty array",
+            });
+        }
+
+        for (const social of socials) {
+            if (typeof social.icon !== "string" || typeof social.link !== "string") {
+                return res.status(400).json({
+                    success: false,
+                    message: "Each social must have an icon (string) and link (string)",
+                });
+            }
+        }
+
+        const existingMember = await Team.findOne({ name });
 
         if (existingMember) {
             return res.status(400).json({
@@ -13,7 +36,7 @@ exports.createTeamMember = async (req, res) => {
             });
         }
 
-        const newMember = await Team.create({ profilePic, name, emailId, githubUrl, xUrl });
+        const newMember = await Team.create({ name, role, tag, bio, image, socials });
 
         res.status(201).json({
             success: true,
@@ -21,11 +44,10 @@ exports.createTeamMember = async (req, res) => {
             data: newMember
         });
     } catch (error) {
-        console.error(error);
-
         res.status(500).json({
             success: false,
-            message: "Failed to add team member"
+            message: "Failed to add team member",
+            error: error.message
         });
     }
 };
