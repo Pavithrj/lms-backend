@@ -19,7 +19,14 @@ const feedbackSchema = new mongoose.Schema({
     feedbackMessage: {
         type: String,
         required: true,
-        minlength: 10
+        minlength: 10,
+        validate: {
+            validator: function (value) {
+                const wordCount = value.trim().split(/\s+/).length;
+                return wordCount <= 50;
+            },
+            message: "Feedback message cannot exceed 50 words."
+        }
     },
     status: {
         type: String,
