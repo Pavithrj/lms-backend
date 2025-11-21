@@ -4,6 +4,14 @@ exports.createFeedback = async (req, res) => {
     try {
         const { name, emailId, feedbackType, feedbackMessage } = req.body;
 
+        const wordCount = feedbackMessage.trim().split(/\s+/).length;
+        if (wordCount > 50) {
+            return res.status(400).json({
+                success: false,
+                message: "Feedback message cannot exceed 50 words."
+            });
+        }
+
         const newFeedback = new Feedback({
             name,
             emailId,
@@ -19,7 +27,11 @@ exports.createFeedback = async (req, res) => {
             data: newFeedback
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: "Server Error", error: error.message });
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message
+        });
     }
 };
 
