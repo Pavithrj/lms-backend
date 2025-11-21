@@ -1,26 +1,39 @@
 const mongoose = require('mongoose');
 
-const teamSchema = new mongoose.Schema({
-    profilePic: {
+const socialSchema = new mongoose.Schema({
+    icon: {
         type: String,
         required: true
     },
+    link: {
+        type: String,
+        required: true
+    }
+});
+
+const teamSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     },
-    emailId: {
-        type: String,
-        required: true,
-        unique: true,
-        lowercase: true
-    },
-    githubUrl: {
+    role: {
         type: String,
         required: true
     },
-    xUrl: {
+    tag: {
         type: String,
+        required: true
+    },
+    bio: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: String,
+        required: true
+    },
+    socials: {
+        type: [socialSchema],
         required: true
     }
 });
