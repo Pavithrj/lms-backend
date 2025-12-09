@@ -2,9 +2,9 @@ const Team = require("../models/Team");
 
 exports.createTeamMember = async (req, res) => {
     try {
-        const { name, role, tag, bio, image, socials } = req.body;
+        const { name, tag, bio, image, socials } = req.body;
 
-        if (!name || !role || !tag || !bio || !image || !socials) {
+        if (!name || !tag || !bio || !image || !socials) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields",
@@ -36,7 +36,7 @@ exports.createTeamMember = async (req, res) => {
             });
         }
 
-        const newMember = await Team.create({ name, role, tag, bio, image, socials });
+        const newMember = await Team.create({ name, tag, bio, image, socials });
 
         res.status(201).json({
             success: true,
