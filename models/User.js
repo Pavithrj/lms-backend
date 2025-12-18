@@ -15,15 +15,32 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
         minlength: 6,
         select: false
+    },
+    authProvider: {
+        type: String,
+        enum: ["local", "google", "linkedin", "github"],
+        required: true
+    },
+    providerId: {
+        type: String,
+        default: null
+    },
+    avatar: {
+        type: String,
+        default: null
+    },
+    phoneNumber: {
+        type: String,
+        default: null
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date
 }, { timestamps: true });
 
 UserSchema.pre("save", async function (next) {
+    if (!this.password) return next();
     if (!this.isModified("password")) return next();
 
     const salt = await bcrypt.genSalt(10);
