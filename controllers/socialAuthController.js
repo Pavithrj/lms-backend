@@ -1,52 +1,45 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// exports.createGoogleLogin = async (req, res, next) => {
-//     try {
-//         const { name, email, phoneNumber, avatar } = req.body;
+const getAccessToken = async (code) => {
+    const body = new URLSearchParams({
+        grant_type: "authrization_code",
+        code: code,
+        client_id: process.env.LINKEDIN_CLIENT_ID,
+        client_secret: process.env.LINKEDIN_CLIENT_SECRET,
+        redirect_url: "http://localhost:5000/api/social-auth/callback"
+    });
+    const response = await fewtch("POST https://www.linkedin.com/oauth/v2/accessToken", {
+        method: "POST",
+        headers: {
+            "Content-type": "application/x-www-form-urlencoded"
+        },
+        body: body.toString()
+    });
 
-//         let user;
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
 
-//         user = await User.findOne({ email });
+    const accessToken = await response.json();
+    return accessToken;
+};
 
-//         if (!user) {
-//             const newUser = new User({ name, email, phoneNumber, avatar });
+const getUserData = async (accessToken) => {
+    const response = await fetch("https://api.linkedin.com/v2/userinfo", {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    });
 
-//             await newUser.save();
-//             user = newUser;
-//         }
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
 
-//         user = user.toObject({ getters: true });
-
-//         const token = jwt.sign(
-//             { id: user._id },
-//             process.env.JWT_SECRET,
-//             { expiresIn: "7d" }
-//         );
-
-//         // res.cookie("access_token", token, {
-//         //     httpOnly: true
-//         // });
-
-//         res.cookie("access_token", token, {
-//             httpOnly: true,
-//             sameSite: "lax",
-//             secure: process.env.NODE_ENV === "production"
-//         });
-
-//         res.status(200).json({
-//             success: true,
-//             user
-//         });
-//     } catch (err) {
-//         // res.status(500).json({
-//         //     success: false,
-//         //     error: err.message
-//         // });
-
-//         next(err);
-//     }
-// };
+    const userData = await response.json();
+    return userData;
+};
 
 exports.createGoogleLogin = async (req, res) => {
     try {
@@ -92,6 +85,47 @@ exports.createGoogleLogin = async (req, res) => {
             success: false,
             error: err.message
         });
+    }
+};
+
+exports.linkedinCallback = async (req, res, next) => {
+    try {
+        const { code } = req.query;
+
+        const accessToken = await getAccessToken(code);
+
+        const userData = await getUserData(accessToken.access_token);
+
+        if (!userData) {
+            return next(error);
+        }
+
+        let user;
+
+        user = await User.findOne({ email: userData.email });
+
+        if (!user) {
+            user = new User({
+                name: userData.name,
+                email: userData.email,
+                phone: userData?.phone,
+                avatar: userData?.picture
+            });
+
+            await user.save();
+        }
+
+        const token = jwt.sign({ name: userData.name, email: userData.email, avatar: userData?.picture }, process.env.JWT_SECRET);
+
+        res.cookie("access_token", token,
+            {
+                httpOnly: true
+            }
+        );
+
+        res.redirect("http://localhost:5173/");
+    } catch (error) {
+        next(error);
     }
 };
 
