@@ -3,13 +3,13 @@ const jwt = require('jsonwebtoken');
 
 const getAccessToken = async (code) => {
     const body = new URLSearchParams({
-        grant_type: "authrization_code",
+        grant_type: "authorization_code",
         code: code,
         client_id: process.env.LINKEDIN_CLIENT_ID,
         client_secret: process.env.LINKEDIN_CLIENT_SECRET,
         redirect_url: "http://localhost:5000/api/social-auth/callback"
     });
-    const response = await fewtch("POST https://www.linkedin.com/oauth/v2/accessToken", {
+    const response = await fetch("https://api.linkedin.com/v2/userinfo", {
         method: "POST",
         headers: {
             "Content-type": "application/x-www-form-urlencoded"
@@ -91,37 +91,37 @@ exports.createGoogleLogin = async (req, res) => {
 exports.linkedinCallback = async (req, res, next) => {
     try {
         const { code } = req.query;
-
-        const accessToken = await getAccessToken(code);
-
-        const userData = await getUserData(accessToken.access_token);
-
-        if (!userData) {
-            return next(error);
+        if (!code) {
+            return res.status(400).json({ message: "Missing code" });
         }
 
-        let user;
+        const tokenData = await getAccessToken(code);
+        const userData = await getUserData(tokenData.access_token);
 
-        user = await User.findOne({ email: userData.email });
+        let user = await User.findOne({ email: userData.email });
 
         if (!user) {
             user = new User({
                 name: userData.name,
                 email: userData.email,
-                phone: userData?.phone,
-                avatar: userData?.picture
+                avatar: userData?.picture,
+                authProvider: "linkedin",
+                providerId: userData.sub
             });
-
-            await user.save();
         }
 
-        const token = jwt.sign({ name: userData.name, email: userData.email, avatar: userData?.picture }, process.env.JWT_SECRET);
-
-        res.cookie("access_token", token,
-            {
-                httpOnly: true
-            }
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
         );
+
+        res.cookie("access_token", token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: false,
+            path: "/"
+        });
 
         res.redirect("http://localhost:5173/");
     } catch (error) {
@@ -129,12 +129,12 @@ exports.linkedinCallback = async (req, res, next) => {
     }
 };
 
-exports.getUser = async (req, res, next) => {
+exports.getUser = async (req, res) => {
     try {
         const token = req.cookies.access_token;
 
         if (!token) {
-            return res.status(403).json({
+            return res.status(401).json({
                 success: false,
                 message: "Unauthorized"
             });
@@ -143,20 +143,21 @@ exports.getUser = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.id).select("-password");
 
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
         res.status(200).json({
             success: true,
             user
         });
-
-        if (!user) {
-            return res.status(404).json({ success: false });
-        }
     } catch (err) {
-        res.status(500).json({
+        res.status(401).json({
             success: false,
-            error: err
+            message: "Invalid token"
         });
-
-        next(err);
     }
 };
