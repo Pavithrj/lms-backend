@@ -7,9 +7,9 @@ const getAccessToken = async (code) => {
         code: code,
         client_id: process.env.LINKEDIN_CLIENT_ID,
         client_secret: process.env.LINKEDIN_CLIENT_SECRET,
-        redirect_url: "http://localhost:5000/api/social-auth/callback"
+        redirect_uri: "http://localhost:5000/api/social-auth/callback"
     });
-    const response = await fetch("https://api.linkedin.com/v2/userinfo", {
+    const response = await fetch("https://www.linkedin.com/oauth/v2/accessToken", {
         method: "POST",
         headers: {
             "Content-type": "application/x-www-form-urlencoded"
@@ -101,7 +101,7 @@ exports.linkedinCallback = async (req, res, next) => {
         let user = await User.findOne({ email: userData.email });
 
         if (!user) {
-            user = new User({
+            user = await User.create({
                 name: userData.name,
                 email: userData.email,
                 avatar: userData?.picture,
