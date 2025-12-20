@@ -129,6 +129,33 @@ exports.linkedinCallback = async (req, res, next) => {
     }
 };
 
+exports.createGithubLogin = async (req, res, next) => {
+    try {
+        const { name, email, phoneNumber, avatar } = req.body;
+
+        let user;
+        user = await User.findOne({ email });
+
+        if (!user) {
+            user = await User.create({ name, email, phoneNumber, avatar });
+        }
+
+        user = user.toObject({ getters: true });
+        const token = jwt.sign(user, process.env.JWT_SECRET);
+
+        res.cookie("access_token", token, {
+            httpOnly: true
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Login success."
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.getUser = async (req, res) => {
     try {
         const token = req.cookies.access_token;
