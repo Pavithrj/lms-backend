@@ -1,5 +1,7 @@
 const express = require('express');
-const { register, login, forgotPassword, resetPassword, getAllUsers, getUser } = require('../controllers/authController');
+const { register, login, forgotPassword, resetPassword } = require('../controllers/auth.controller');
+const { googleLogin, linkedinCallback, githubLogin } = require('../controllers/socialAuth.controller');
+const { getMe, getUserById, getAllUsers } = require('../controllers/user.controller');
 const { protect } = require('../middleware/auth');
 
 const router = express.Router();
@@ -8,26 +10,20 @@ router.post("/register", register);
 
 router.post("/login", login);
 
-router.get("/user/:id", getUser);
-
-router.get("/users", getAllUsers);
-
 router.post("/forgot-password", forgotPassword);
 
 router.put("/reset-password/:token", resetPassword);
 
-// router.post("/logout", logout);
-// router.post("/refresh-token", refreshToken);
+router.post("/google", googleLogin);
 
-// router.post("/forgotpassword", forgotPassword);
-// router.put("/resetpassword/:token", resetPassword);
-// router.put("/me/change-password", protect, changePassword);
+router.get("/callback", linkedinCallback);
 
-// router.get("/me", protect, getCurrentUser);
-// router.put("/me/update", protect, updateUser);
-// router.delete("/me/delete", protect, deleteUser);
+router.post("/github", githubLogin);
 
-// router.get("/users", protect, getAllUsers);
-// router.get("/users/:id", protect, getUser);
+router.get("/me", protect, getMe);
+
+router.get("/", protect, getAllUsers);
+
+router.get("/:id", protect, getUserById);
 
 module.exports = router;
