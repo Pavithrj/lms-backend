@@ -4,7 +4,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
-const socialAuthRoutes = require('./routes/socialAuthRoutes');
 const teamRoutes = require('./routes/teamRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
 const errorHandler = require('./middleware/error');
@@ -42,7 +41,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/social-auth", socialAuthRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/feedback", feedbackRoutes);
 
