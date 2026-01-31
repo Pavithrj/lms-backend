@@ -41,7 +41,7 @@ const getUserData = async (accessToken) => {
     return userData;
 };
 
-exports.createGoogleLogin = async (req, res) => {
+exports.googleLogin = async (req, res) => {
     try {
         const { name, email, avatar, providerId } = req.body;
 
@@ -129,7 +129,7 @@ exports.linkedinCallback = async (req, res, next) => {
     }
 };
 
-exports.createGithubLogin = async (req, res, next) => {
+exports.githubLogin = async (req, res, next) => {
     try {
         const { name, email, phoneNumber, avatar } = req.body;
 
